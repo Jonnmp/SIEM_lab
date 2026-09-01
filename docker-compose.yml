@@ -1,0 +1,24 @@
+networks:
+  red_soc:
+    driver: bridge
+
+services:
+  servidor_victima:
+    image: nginx:alpine
+    container_name: server_target
+    networks:
+      - red_soc
+    ports:
+      - "8080:80"
+
+  siem_web:
+    image: python:3.10-slim
+    container_name: siem_django
+    ports:
+      - "8000:8000"
+    networks:
+      - red_soc
+    volumes:
+      - ./:/app
+    working_dir: /app
+    command: tail -f /dev/null
