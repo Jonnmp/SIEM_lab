@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIEM - Tactic Monitor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 font-mono p-6">
+
+    <!-- Encabezado del SOC -->
+     <header class="border-b border-gray-700 pb-4 mb-6">
+        <h1 class="text-3xl font-bold text-blue-400">SIEM <span class="text-gray-400 text-xl">- Tactic Monitor</span></h1>
+        <p class="text-gray-500 text-sm mt-1">Estado del Servidor. <span class="text-green-500">Operativo</span> | Analista: J. Moo</p>
+    </header>
+
+    <!-- Grid Principal -->
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Panel de Alertas (Fisica/Quimica) -->
+        <div class="bg-gray-800 p-4 rounded border border-gray-700 shadow-lg">
+            <h2 class="text-lg text-red-400 border-b border-b border-gray-700 pb-2 mb-4">Alertas Criticas</h2>
+            <ul class="text-sm space-y-2">
+                <li class="bg-gray-700 p-2 rounded">Esperando telemetria...</li>
+            </ul>
+        </div>
+
+        <!-- Panel de Tráfico (Para Métodos Numéricos / Estructura de Datos) -->
+        <div class="bg-gray-800 p-4 rounded border border-gray-700 shadow-lg md:col-span-2">
+            <h2 class="text-lg text-blue-300 border-b border-gray-700 pb-2 mb-4">Tráfico de Red en Tiempo Real</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead class="text-gray-400 bg-gray-700">
+                        <tr>
+                            <th class="px-4 py-2">Timestamp</th>
+                            <th class="px-4 py-2">IP Origen</th>
+                            <th class="px-4 py-2">Puerto</th>
+                            <th class="px-4 py-2">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Aquí inyectaremos los logs falsos más adelante -->
+                        <tr class="border-b border-gray-700">
+                            <td class="px-4 py-2">10:55:01</td>
+                            <td class="px-4 py-2">192.168.1.100</td>
+                            <td class="px-4 py-2">80</td>
+                            <td class="px-4 py-2 text-green-400">Permitido</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
