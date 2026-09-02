@@ -38,7 +38,7 @@
                             <th class="px-4 py-2">Estado</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tabla-logs">
                         <!-- Aquí inyectaremos los logs falsos más adelante -->
                         <tr class="border-b border-gray-700">
                             <td class="px-4 py-2">10:55:01</td>
@@ -51,6 +51,52 @@
             </div>
         </div>
     </div>
+
+    <script>
+        <!-- Motor de actualización en tiempo real con Debugging -->
+
+        function buscarTelemetria() {
+            fetch('/api/telemetria/')
+                .then(respuesta => respuesta.json())
+                .then(datos => {
+                    // 1. Imprimimos lo que llega del servidor
+                    console.log("Datos recibidos:", datos); 
+                    
+                    const tabla = document.getElementById('tabla-logs');
+                    
+                    // 2. Verificamos si Javascript encuentra la tabla
+                    if (!tabla) {
+                        console.error("Error: No se encontró la etiqueta <tbody> en el HTML");
+                        return;
+                    }
+
+                    const nuevaFila = document.createElement('tr');
+                    nuevaFila.className = 'border-b border-gray-700 bg-gray-800 bg-opacity-50';
+
+                    const hora = new Date().toLocaleTimeString();
+                    const colorEstado = datos.maliciosa ? 'text-red-500 font-bold' : 'text-green-400';
+
+                    nuevaFila.innerHTML = `
+                        <td class="px-4 py-2">${hora}</td>
+                        <td class="px-4 py-2 font-mono">${datos.ip}</td>
+                        <td class="px-4 py-2">${datos.puerto}</td>
+                        <td class="px-4 py-2 ${colorEstado}">${datos.estado}</td>
+                    `;
+
+                    tabla.insertBefore(nuevaFila, tabla.firstChild);
+
+                    if (tabla.children.length > 10) {
+                        tabla.removeChild(tabla.lastChild);
+                    }
+                })
+                .catch(error => {
+                    // 3. Atrapamos cualquier error del código
+                    console.error("Error en la ejecución:", error);
+                });
+        }
+
+        setInterval(buscarTelemetria, 2000);
+    </script>
 
 </body>
 </html>
