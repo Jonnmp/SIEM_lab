@@ -18,7 +18,7 @@
      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         <!-- Panel de Alertas (Fisica/Quimica) -->
-        <div class="bg-gray-800 p-4 rounded border border-gray-700 shadow-lg">
+        <div id="panel-alertas" class="bg-gray-800 p-4 rounded border border-gray-700 font-mono text-sm shadow-lg">
             <h2 class="text-lg text-red-400 border-b border-b border-gray-700 pb-2 mb-4">Alertas Criticas</h2>
             <ul class="text-sm space-y-2">
                 <li class="bg-gray-700 p-2 rounded">Esperando telemetria...</li>
@@ -87,6 +87,29 @@
 
                     if (tabla.children.length > 10) {
                         tabla.removeChild(tabla.lastChild);
+                    }
+
+                    // --- NUEVA LÓGICA DE ALERTAS CRÍTICAS ---
+                    if (datos.maliciosa) {
+                        const panelAlertas = document.getElementById('panel-alertas');
+                        
+                        // Si es la primera alerta, borramos el mensaje por defecto
+                        if (panelAlertas.innerText.includes("Esperando")) {
+                            panelAlertas.innerHTML = "";
+                        }
+
+                        // Creamos el mensaje de alerta en rojo
+                        const nuevaAlerta = document.createElement('div');
+                        nuevaAlerta.className = 'text-red-400 mb-2 border-l-2 border-red-500 pl-2 bg-red-900 bg-opacity-20 p-1';
+                        nuevaAlerta.innerHTML = `[BLOQUEO] ${hora} - Tráfico hostil interceptado | IP: ${datos.ip} | Puerto: ${datos.puerto}`;
+
+                        // Lo insertamos hasta arriba
+                        panelAlertas.insertBefore(nuevaAlerta, panelAlertas.firstChild);
+
+                        // Mantenemos el panel limpio, mostrando solo las últimas 5 alertas
+                        if (panelAlertas.children.length > 5) {
+                            panelAlertas.removeChild(panelAlertas.lastChild);
+                        }
                     }
                 })
                 .catch(error => {
