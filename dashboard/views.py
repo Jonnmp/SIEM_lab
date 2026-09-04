@@ -18,19 +18,25 @@ for ip in ips_maliciosas:
 
 historial_peticiones = []
 historial_exfiltracion = []
+temperatura_actual = 45.0
+voltaje_actual = 120.0
+ultimo_ataque_crypto = 0
 
 
 def index(request):
     """
     Renderiza el panel y escucha los ataques esternos.
     """
-    global historial_peticiones, historial_exfiltracion
+    global historial_peticiones, historial_exfiltracion, ultimo_ataque_crypto
     ahora = time.time()
 
     historial_peticiones.append(ahora)
 
     if 'descargar_respaldo' in request.GET.get('accion', ''):
         historial_exfiltracion.append(ahora)
+
+    if 'cryptojacking' in request.GET.get('ataque', ''):
+        ultimo_ataque_crypto = ahora
 
     return render(request, 'dashboard/index.html')
 
@@ -61,7 +67,7 @@ def calcular_gradiente(historial, ventana_tiempo, ahora):
     return dy/dt
 
 def generar_telemetria(request):
-    global historial_peticiones, historial_exfiltracion
+    global historial_peticiones, historial_exfiltracion, temperatura_actual, voltaje_actual, ultimo_ataque_crypto
     ahora = time.time()
 
     historial_peticiones = [t for t in historial_peticiones if ahora - t <= 10]
@@ -74,6 +80,19 @@ def generar_telemetria(request):
     gradiente = calcular_gradiente(historial_exfiltracion, 30, ahora)
 
     anomalia_exfiltracion = gradiente > 0.2
+
+    # --- Simulacion Fisica y Termodinamica ---
+    es_cryptojacking = 'cryptojacking' in request.GET.get('ataque', '')
+    es_cryptojacking = (ahora - ultimo_ataque_crypto) <= 2.0
+
+    if es_cryptojacking:
+        voltaje_actual = random.uniform(280.0, 310.0) 
+        temperatura_actual += (95.0 - temperatura_actual) * 0.15 
+    else:
+        voltaje_actual = random.uniform(110.0, 130.0)
+        temperatura_actual += (45.0 - temperatura_actual) * 0.10
+
+    alerta_cryptojacking = (temperatura_actual > 80.0) and (voltaje_actual > 250.0)
 
     """ Genera un log de red simulado y lo valida contra el Arbol Trie."""
 
@@ -94,7 +113,10 @@ def generar_telemetria(request):
         "anomalia_ddos": anomalia_ddos,
         "peticiones_5s": bloque_reciente,
         "anomalia_exfiltracion": anomalia_exfiltracion,
-        "gradiente_fuga": round(gradiente, 2)
+        "gradiente_fuga": round(gradiente, 2),
+        "temperatura_c" : round(temperatura_actual, 1),
+        "voltaje_w" : round(voltaje_actual, 1),
+        "alerta_cryptojacking": alerta_cryptojacking
     }
 
     return JsonResponse(datos_log)
