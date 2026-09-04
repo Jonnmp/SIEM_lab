@@ -21,6 +21,7 @@ historial_exfiltracion = []
 temperatura_actual = 45.0
 voltaje_actual = 120.0
 ultimo_ataque_crypto = 0
+salud_hardware = 100.0
 
 
 def index(request):
@@ -67,7 +68,7 @@ def calcular_gradiente(historial, ventana_tiempo, ahora):
     return dy/dt
 
 def generar_telemetria(request):
-    global historial_peticiones, historial_exfiltracion, temperatura_actual, voltaje_actual, ultimo_ataque_crypto
+    global historial_peticiones, historial_exfiltracion, temperatura_actual, voltaje_actual, ultimo_ataque_crypto, salud_hardware
     ahora = time.time()
 
     historial_peticiones = [t for t in historial_peticiones if ahora - t <= 10]
@@ -94,6 +95,19 @@ def generar_telemetria(request):
 
     alerta_cryptojacking = (temperatura_actual > 80.0) and (voltaje_actual > 250.0)
 
+    # Ecuación de Arrhenius (Química y Electromigración) ---
+    # Si la temperatura supera los 70°C, el daño aumenta exponencialmente.
+    if temperatura_actual > 70.0:
+        # Base 1.1 elevada al exceso térmico crea una curva de daño exponencial
+        tasa_de_dano = 0.01 * (1.1 ** (temperatura_actual - 70.0))
+        salud_hardware -= tasa_de_dano
+        
+    # Evitamos que la salud baje de 0% (servidor muerto)
+    salud_hardware = max(0.0, salud_hardware)
+
+    # Disparamos la alerta crítica si la salud cae por debajo del 85%
+    alerta_degradacion = salud_hardware < 85.0
+
     """ Genera un log de red simulado y lo valida contra el Arbol Trie."""
 
     if random.random() < 0.20:
@@ -116,7 +130,9 @@ def generar_telemetria(request):
         "gradiente_fuga": round(gradiente, 2),
         "temperatura_c" : round(temperatura_actual, 1),
         "voltaje_w" : round(voltaje_actual, 1),
-        "alerta_cryptojacking": alerta_cryptojacking
+        "alerta_cryptojacking": alerta_cryptojacking,
+        "salud_hardware": round(salud_hardware, 3),
+        "alerta_degradacion": alerta_degradacion
     }
 
     return JsonResponse(datos_log)
