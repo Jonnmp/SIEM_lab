@@ -22,6 +22,7 @@ temperatura_actual = 45.0
 voltaje_actual = 120.0
 ultimo_ataque_crypto = 0
 salud_hardware = 100.0
+tiempo_fin_mitigacion = 0
 
 
 def index(request):
@@ -68,7 +69,7 @@ def calcular_gradiente(historial, ventana_tiempo, ahora):
     return dy/dt
 
 def generar_telemetria(request):
-    global historial_peticiones, historial_exfiltracion, temperatura_actual, voltaje_actual, ultimo_ataque_crypto, salud_hardware
+    global historial_peticiones, historial_exfiltracion, temperatura_actual, voltaje_actual, ultimo_ataque_crypto, salud_hardware, tiempo_fin_mitigacion
     ahora = time.time()
 
     historial_peticiones = [t for t in historial_peticiones if ahora - t <= 10]
@@ -86,12 +87,28 @@ def generar_telemetria(request):
     es_cryptojacking = 'cryptojacking' in request.GET.get('ataque', '')
     es_cryptojacking = (ahora - ultimo_ataque_crypto) <= 2.0
 
+    mitigacion_activa = ahora < tiempo_fin_mitigacion
+
+    if salud_hardware < 85.0 and not mitigacion_activa:
+            tiempo_fin_mitigacion = ahora + 15.0
+            mitigacion_activa = True
+    
+    if mitigacion_activa:
+            es_cryptojacking = False
+    else:
+            es_cryptojacking = (ahora - ultimo_ataque_crypto) <= 2.0
+    
+
     if es_cryptojacking:
         voltaje_actual = random.uniform(280.0, 310.0) 
         temperatura_actual += (95.0 - temperatura_actual) * 0.15 
     else:
         voltaje_actual = random.uniform(110.0, 130.0)
         temperatura_actual += (45.0 - temperatura_actual) * 0.10
+
+    if temperatura_actual < 60.0 and salud_hardware < 100.0:
+            salud_hardware += 1.0  # Recupera 1% por cada ciclo que esté frío
+            salud_hardware = min(100.0, salud_hardware) # Tope máximo del 100%
 
     alerta_cryptojacking = (temperatura_actual > 80.0) and (voltaje_actual > 250.0)
 
@@ -107,6 +124,15 @@ def generar_telemetria(request):
 
     # Disparamos la alerta crítica si la salud cae por debajo del 85%
     alerta_degradacion = salud_hardware < 85.0
+
+    if salud_hardware < 85.0 and not mitigacion_activa:
+        tiempo_fin_mitigacion = ahora + 15.0
+        mitigacion_activa = True
+
+    if mitigacion_activa:
+        es_cryptojacking = False
+    else:
+        es_cryptojacking = (ahora - ultimo_ataque_crypto) <= 2.0
 
     """ Genera un log de red simulado y lo valida contra el Arbol Trie."""
 
@@ -132,7 +158,8 @@ def generar_telemetria(request):
         "voltaje_w" : round(voltaje_actual, 1),
         "alerta_cryptojacking": alerta_cryptojacking,
         "salud_hardware": round(salud_hardware, 3),
-        "alerta_degradacion": alerta_degradacion
+        "alerta_degradacion": alerta_degradacion,
+        "mitigacion_activa": mitigacion_activa
     }
 
     return JsonResponse(datos_log)

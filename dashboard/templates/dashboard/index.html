@@ -10,8 +10,7 @@
 <body class="bg-gray-900 text-gray-100 font-mono p-6">
 
     <!-- Safelist actualizada con naranja -->
-    <div class="hidden text-purple-400 border-purple-500 bg-purple-900 text-yellow-400 border-yellow-500 bg-yellow-900 text-red-400 border-red-500 bg-red-900 text-orange-400 border-orange-500 bg-orange-900 animate-pulse"></div>
-
+    <div class="hidden text-purple-400 border-purple-500 bg-purple-900 text-yellow-400 border-yellow-500 bg-yellow-900 text-red-400 border-red-500 bg-red-900 text-orange-400 border-orange-500 bg-orange-900 text-cyan-400 border-cyan-500 bg-cyan-900 animate-pulse"></div>
     <!-- Encabezado del SOC -->
      <header class="border-b border-gray-700 pb-4 mb-6">
         <h1 class="text-3xl font-bold text-blue-400">SIEM <span class="text-gray-400 text-xl">- Tactic Monitor</span></h1>
@@ -265,6 +264,23 @@
                         if (panelAlertas.children.length > 5) {
                             panelAlertas.removeChild(panelAlertas.lastChild);
                         }
+                    }
+
+                    // --- NUEVA LÓGICA: RESPUESTA AUTOMÁTICA SOAR ---
+                    if (datos.mitigacion_activa) {
+                        const panelAlertas = document.getElementById('panel-alertas');
+                        if (panelAlertas.innerText.includes("Esperando")) panelAlertas.innerHTML = "";
+
+                        const nuevaDefensa = document.createElement('div');
+                        // Usamos color Cyan para indicar una acción del sistema, no un ataque
+                        nuevaDefensa.className = 'text-cyan-400 mb-2 border-l-2 border-cyan-500 pl-2 bg-cyan-900 bg-opacity-30 p-1 font-bold';
+                        nuevaDefensa.innerHTML = `[SOAR - CORTAFUEGOS ACTIVO] ${hora} - IA Defensiva activada. Tráfico malicioso bloqueado temporalmente. Enfriando hardware...`;
+
+                        panelAlertas.insertBefore(nuevaDefensa, panelAlertas.firstChild);
+                        if (panelAlertas.children.length > 5) panelAlertas.removeChild(panelAlertas.lastChild);
+                        
+                        // Efecto visual extra: Hacemos parpadear el panel de consumo en azul para indicar enfriamiento forzado
+                        document.getElementById('sensor-volt').className = "text-2xl font-bold text-cyan-400 animate-pulse";
                     }
 
                     // --- ACTUALIZACIÓN DE LA GRÁFICA EN TIEMPO REAL ---
