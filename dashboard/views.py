@@ -89,7 +89,7 @@ def generar_telemetria(request):
 
     mitigacion_activa = ahora < tiempo_fin_mitigacion
 
-    if salud_hardware < 85.0 and not mitigacion_activa:
+    if salud_hardware < 98.0 and not mitigacion_activa:
             tiempo_fin_mitigacion = ahora + 15.0
             mitigacion_activa = True
     
