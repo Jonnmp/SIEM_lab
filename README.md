@@ -41,7 +41,7 @@ El núcleo de inteligencia del SIEM se basa en tres vectores de detección:
 ---
 
 ## 🤖 Motor SOAR (Respuesta Autónoma)
-El sistema no solo monitorea, sino que actúa. Al detectar que la salud física del servidor cae por debajo del 85% debido a un ataque de Cryptojacking, la Inteligencia Defensiva (SOAR) ejecuta un **Cortafuegos Activo**:
+El sistema no solo monitorea, sino que actúa. Al detectar que la salud física del servidor cae por debajo del 98% debido a un ataque de Cryptojacking, la Inteligencia Defensiva (SOAR) ejecuta un **Cortafuegos Activo**:
 1. Intercepta y bloquea el proceso malicioso.
 2. Fuerzan el enfriamiento del hardware.
 3. Permite la regeneración del ciclo térmico.
