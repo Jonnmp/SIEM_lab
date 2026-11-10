@@ -67,3 +67,4 @@ Dentro del entorno, ejecutar los scripts de la carpeta `red_team` para auditar l
 * **Amenaza Persistente Avanzada (APT):** `python ataque_apt.py` (Ejecuta una cadena de ataques coordinados y multihilo para evaluar el SOAR y las gráficas bajo estrés máximo).
 
 ---
+*Proyecto Integrador desarrollado para la evaluación técnica en arquitectura de sistemas de seguridad.*
