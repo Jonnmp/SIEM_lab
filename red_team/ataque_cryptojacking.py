@@ -1,9 +1,6 @@
 import urllib.request
 import time
 
-import urllib.request
-import time
-
 # Enviamos la bandera 'ataque=cryptojacking' al servidor para activar el malware
 OBJETIVO = "http://127.0.0.1:8000/?ataque=cryptojacking"
 

@@ -21,4 +21,6 @@ services:
     volumes:
       - ./:/app
     working_dir: /app
-    command: tail -f /dev/null
+    command: sh -c "pip install --upgrade pip && pip install django && python manage.py runserver 0.0.0.0:8000"
+
+
